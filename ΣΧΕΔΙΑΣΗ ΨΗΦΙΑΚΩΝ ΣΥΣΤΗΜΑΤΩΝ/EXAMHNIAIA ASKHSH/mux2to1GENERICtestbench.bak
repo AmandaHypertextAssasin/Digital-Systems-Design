@@ -1,0 +1,44 @@
+-- Code your testbench here
+USE WORK.ALL;
+ENTITY test_bench IS
+END;
+
+ARCHITECTURE struct OF test_bench IS
+
+	SIGNAL a_s, b_s, s_s, z_s : BIT;
+	SIGNAL z2_s, z3_s : BIT;
+   
+BEGIN
+
+l1:  ENTITY mux2_1(behave) PORT MAP (a => a_s, b => b_s, s => s_s, z => z_s);
+l2:  ENTITY mux2_1(dataflow)  PORT MAP (a => a_s, b => b_s, s => s_s, z => z2_s);
+l3:  ENTITY mux2_1(struct)  PORT MAP (a => a_s, b => b_s, s => s_s, z => z3_s);
+
+
+
+--Version 1:
+-- A simple test scenario:
+
+--s_s <= '0', '1' AFTER 1000 ns, '0' after 2000 ns;
+--a_s <= '0'; 
+--b_s <= '1'; 
+
+
+--Version 2:
+--A more complex test scenario. You have to specify the Run Time, for example equal with  2200 ns. 
+--If you do not specify the run time, it will give an error, or it will run for a too long time !
+
+s_s <= '0', '1' AFTER 1000 ns, '0' after 2000 ns;
+a_s <= NOT a_s AFTER 40 ns;
+b_s <= NOT b_s AFTER 80 ns;
+
+
+--Version 3:
+
+--A general test scenario, when we use a test vector generator (TVG) in order to 
+--generate all possible input combinations for the inputs of the circuits under test.
+
+--tvg_label: ENTITY TestVectorGen generic map(size=>3) port map(value(2) => s_s, value(1) => a_s, value(0) => b_s);
+
+
+END; -- architecture

@@ -1,0 +1,73 @@
+--TESTBENCH FOR REGISTER FILE
+---
+
+library ieee; 
+use ieee.std_logic_1164.all; 
+
+entity regFileTb is    
+end entity; 
+
+architecture tbArc of regFileTb is 
+
+component regFile32x8
+    port (  
+        clock:       in  std_logic;
+        wrRegNum:    in  std_logic_vector (2 downto 0); --represents the register that we write the result
+        wrData:      in  std_logic_vector (31 downto 0);
+        readRegNum1:    in  std_logic_vector (2 downto 0);--1st register from which we read
+        readRegNum2:    in  std_logic_vector (2 downto 0);--second register from which we read
+        port1:          out std_logic_vector (31 downto 0);-- 2 ports to store the int values of registers
+        port2:          out std_logic_vector (31 downto 0)
+    
+        ); 
+    end component; 
+
+signal clock:        std_logic := '1'; -- clock is on 1
+signal wrRegNum:     std_logic_vector (2 downto 0) := "000"; ---number 5
+signal wrData:       std_logic_vector (31 downto 0) := (others => '0');
+signal readRegNum1:     std_logic_vector (2 downto 0) := "000"; ---register $3 
+signal readRegNum2:     std_logic_vector (2 downto 0) := "000";--- register $4
+signal port1:           std_logic_vector (31 downto 0);	--no need for initialization because they are outputs
+signal port1:           std_logic_vector (31 downto 0);
+
+begin 
+
+DUT: 
+    regFile32x8 
+        port map (
+            clock => clock,
+            wrRegNum => wrRegNum,
+            wrData  => wrData,
+            readRegNum1 => readRegNum1, 
+            readRegNum2 => readRegNum2, 
+            port1 => Port1, 
+            port2 => Port2
+        ); 
+
+
+STIMULUS:
+    process 
+    begin 
+    wait for 20 ns;
+    clock <= '0';
+    wait for 20 ns;
+    clock <= '1';
+    wait for 20 ns;
+    wrData <= x"feedface";
+    wrRegnum <= "001";
+    clock <= '0';
+    wait for 20 ns;
+    clock <= '1';
+    readRegNum1 <= "001";
+    wait for 20 ns;
+    wrData <= x"deadbeef";
+    wrRegNum <= "010";
+    readRegNum2 <= "010";
+    clock<= '0';
+    wait for 20 ns;
+    clock <= '1';
+    wait for 20 ns;
+    wait for 20 ns;
+    wait;
+ end process; 
+end architecture; 
